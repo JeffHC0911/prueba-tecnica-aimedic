@@ -1,4 +1,15 @@
-/* src/App.module.css */
+/* App.css */
+:root {
+  --bg-primary: #f0f4f8;
+  --bg-secondary: #ffffff;
+  --text-primary: #333;
+  --text-secondary: #666;
+  --primary: #4f46e5;
+  --accent: #3b82f6;
+  --danger: #e91e63;
+  --border-color: #d1d5db;
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
 
 .appContainer {
   min-height: 100vh;
