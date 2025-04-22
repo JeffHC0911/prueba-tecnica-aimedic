@@ -15,7 +15,13 @@ interface ChartProps {
 }
 
 export const ChartComponent: React.FC<ChartProps> = ({ data }) => {
-  // Preparar los datos del gráfico
+  
+  /**
+   * Genera los datos del gráfico a partir de la información meteorológica.
+   * Los datos incluyen etiquetas para los días y valores de temperatura.
+   * 
+   * @returns {object} Objeto que contiene las etiquetas y los conjuntos de datos para el gráfico.
+   */
   const chartData = {
     labels: data.hourly.map(item => item.day),
     datasets: [
@@ -36,7 +42,12 @@ export const ChartComponent: React.FC<ChartProps> = ({ data }) => {
     ],
   };
 
-  // Configuración de las opciones para el gráfico, incluyendo el zoom
+
+  /**
+   * Configuración del gráfico, incluyendo opciones de leyenda, tooltip y escalas.
+   * 
+   * @returns {object} Objeto de configuración para el gráfico.
+   */
   const options = {
     responsive: true,
     maintainAspectRatio: false,
@@ -76,7 +87,7 @@ export const ChartComponent: React.FC<ChartProps> = ({ data }) => {
       x: {
         title: {
           display: true,
-          text: "Días",
+          text: "Fechas",
         },
         grid: {
           display: false,
@@ -93,13 +104,13 @@ export const ChartComponent: React.FC<ChartProps> = ({ data }) => {
     zoom: {
       pan: {
         enabled: true,
-        mode: 'xy', // Habilitar desplazamiento en ambos ejes (X y Y)
+        mode: 'xy',
       },
       zoom: {
         enabled: true,
-        mode: 'xy', // Habilitar zoom en ambos ejes (X y Y)
-        speed: 0.1,  // Velocidad del zoom
-        threshold: 2,  // Gesto mínimo para activar el zoom
+        mode: 'xy',
+        speed: 0.1,
+        threshold: 2,
       },
     },
   };

@@ -7,6 +7,13 @@ interface DateRangeSelectProps {
 }
 
 export const DateRangeSelect: React.FC<DateRangeSelectProps> = ({ value, onChange }) => {
+
+    /**
+     * 
+     * @param event Evento de cambio del select
+     * @description Maneja el cambio de valor del select y llama a la función onChange con el nuevo valor.
+     * @returns {void}
+     */
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     onChange(Number(event.target.value));
   };
@@ -22,10 +29,10 @@ export const DateRangeSelect: React.FC<DateRangeSelectProps> = ({ value, onChang
         onChange={handleChange}
         className={styles.select}
       >
-        <option value={1}>1 Día</option>
-        <option value={2}>2 Días</option>
-        <option value={3}>3 Días</option>
-        <option value={6}>6 Días</option>
+        <option value={1}>2 Día</option>
+        <option value={2}>3 Días</option>
+        <option value={3}>4 Días</option>
+        <option value={6}>7 Días</option>
         <option value={12}>12 Días</option>
         <option value={15}>15 Días</option>
       </select>

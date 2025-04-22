@@ -20,23 +20,57 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, loading = false 
     }
   }, []);
 
+  /**
+   * 
+   * @param e Evento de envío del formulario
+   * @description Maneja el envío del formulario, guarda la búsqueda en el localStorage y llama a la función onSearch con los parámetros necesarios.
+   * @param city Ciudad a buscar
+   * @param startDate Fecha de inicio (por defecto "2024-04-01")
+   * @param endDate Fecha de fin (por defecto "2024-04-07")
+   */
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!city.trim()) return;
     
-    // Guardar en búsquedas recientes
+    /**
+     * Guarda la búsqueda reciente en el localStorage y actualiza el estado de las búsquedas recientes.
+     * @param city Ciudad a buscar
+     * @param recentSearches Lista de búsquedas recientes
+     * @description Actualiza el estado de las búsquedas recientes y guarda en el localStorage.
+     * @returns {void}
+     */
     const updatedSearches = [
       city,
       ...recentSearches.filter(item => item.toLowerCase() !== city.toLowerCase())
     ].slice(0, 5);
     
+    /**
+     * Guarda las búsquedas recientes en el localStorage y actualiza el estado de las búsquedas recientes.
+     * @param updatedSearches Lista de búsquedas recientes
+     * 
+     * @description Actualiza el estado de las búsquedas recientes y guarda en el localStorage.
+     */
     setRecentSearches(updatedSearches);
     localStorage.setItem("recentWeatherSearches", JSON.stringify(updatedSearches));
     
-    onSearch(city, "2024-04-01", "2024-04-07"); // Fechas por defecto
+    /**
+     * Llama a la función onSearch con los parámetros necesarios.
+     * @param city Ciudad a buscar
+     * @param startDate Fecha de inicio (por defecto "2024-04-01")
+     * @param endDate Fecha de fin (por defecto "2024-04-07")
+     * @description Llama a la función onSearch con los parámetros necesarios.
+     */
+    onSearch(city, "2024-04-01", "2024-04-07");
     setShowSuggestions(false);
   };
 
+  /**
+   * 
+   * @param suggestion Sugerencia seleccionada
+   * @description Maneja el clic en una sugerencia, actualiza el estado de la ciudad y oculta las sugerencias.
+   * @param suggestion Sugerencia seleccionada
+   * @description Actualiza el estado de la ciudad y oculta las sugerencias.
+   */
   const handleSuggestionClick = (suggestion: string) => {
     setCity(suggestion);
     setShowSuggestions(false);

@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { subDays, format, startOfMonth, subMonths } from "date-fns";
+import { subDays, format} from "date-fns";
 import { useWeather } from "./hooks/useWeather";
 import { ChartComponent } from "./components/Chart/Chart";
 import { SearchBar } from "./components/SearchBar/SearchBar";
 import { DateRangeSelect } from "./components/DateRangeSelect/DateRangeSelect";
 import { WeatherData } from "./types";
 import { utils, writeFile } from "xlsx";
-import { jsPDF } from "jspdf";
-import autoTable from "jspdf-autotable";
+import { AiOutlineDownload } from "react-icons/ai";
 import './App.css';
 
 
@@ -25,6 +24,17 @@ const App: React.FC = () => {
     }
   }, [range]);
 
+  /**
+   * 
+   * @param city Nombre de la ciudad a buscar
+   * @returns {void}
+   * 
+   * Función que se encarga de buscar el clima de una ciudad.
+   * Realiza una llamada a la API para obtener los datos
+   * del clima en un rango de fechas determinado.
+   * 
+   * @throws {Error} Si la ciudad no es encontrada o si hay un error en la API
+   */
   const fetchWeather = async (city: string) => {
     setLoading(true);
     setError(null);
@@ -39,14 +49,23 @@ const App: React.FC = () => {
         case 2: startDate = subDays(endDate, 2); break;
         case 3: startDate = subDays(endDate, 3); break;
         case 6: startDate = subDays(endDate, 6); break;
-        case 12: startDate = subDays(endDate, 12); break;
-        case 15: startDate = subDays(endDate, 15); break;
-        case 30: startDate = startOfMonth(endDate); break;
-        case 90: startDate = subMonths(endDate, 3); break;
-        case 180: startDate = subMonths(endDate, 6); break;
+        case 12: startDate = subDays(endDate, 11); break;
+        case 15: startDate = subDays(endDate, 14); break;
         default: startDate = subDays(endDate, 6);
       }
 
+      /**
+       * Llamada a la API para obtener los datos del clima.
+       * Se utiliza la función fetchWeatherData que se encarga de
+       * realizar la petición a la API y formatear los datos.
+       * 
+       * @param city Nombre de la ciudad a buscar
+       * @param startDate Fecha de inicio del rango
+       * @param endDate Fecha de fin del rango
+       * @returns {Promise<WeatherData>} Datos del clima
+       * 
+       * @throws {Error} Si la ciudad no es encontrada o si hay un error en la API
+       */
       const data = await fetchWeatherData(
         city,
         format(startDate, "yyyy-MM-dd"),
@@ -61,11 +80,28 @@ const App: React.FC = () => {
     }
   };
 
+  /**
+   * 
+   * @param city Nombre de la ciudad a buscar
+   * @returns {void}
+   * 
+   * Función que maneja la búsqueda de clima al hacer submit en el formulario.
+   * Se encarga de actualizar el estado de la ciudad buscada y llamar a la función
+   * fetchWeather para obtener los datos del clima.
+   */
   const handleSearch = (city: string) => {
     setSearchedCity(city);
     fetchWeather(city);
   };
 
+  /**
+   * 
+   * @returns {void}
+   * 
+   * Función que exporta los datos del clima a un archivo XLSX.
+   * Utiliza la librería xlsx para crear un archivo Excel con los datos
+   * de temperatura y fecha. El archivo se descarga automáticamente.
+   */
   const exportToXLSX = () => {
     if (!weatherData) return;
     
@@ -83,6 +119,15 @@ const App: React.FC = () => {
     writeFile(workbook, `Clima_${weatherData.city}.xlsx`);
   };
 
+  /**
+   * 
+   * @returns {void}
+   * 
+   * Función que exporta los datos del clima a un archivo CSV.
+   * Crea un archivo CSV con los datos de temperatura y fecha.
+   * El archivo se descarga automáticamente.
+   * Utiliza el formato UTF-8 para asegurar la compatibilidad con caracteres especiales.
+   */
   const exportToCSV = () => {
     if (!weatherData) return;
     
@@ -122,12 +167,13 @@ const App: React.FC = () => {
         {weatherData && (
           <div className="weatherResult">
             <div className="reportHeader">
-              <h2 className="locationTitle">Temperatura en {weatherData.city}</h2>
               <div className="exportButtons">
                 <button onClick={exportToXLSX} className="exportBtn xlsx">
+              <AiOutlineDownload />
                   Excel
                 </button>
                 <button onClick={exportToCSV} className="exportBtn csv">
+              <AiOutlineDownload />
                   CSV
                 </button>
               </div>
