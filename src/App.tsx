@@ -161,6 +161,7 @@ const App: React.FC = () => {
         <SearchBar onSearch={handleSearch} loading={loading} />
         <DateRangeSelect value={range} onChange={setRange} />
 
+
         {loading && <p className="loadingMessage">Cargando...</p>}
         {error && <p className="errorMessage">{error}</p>}
 

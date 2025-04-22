@@ -96,6 +96,11 @@
   gap: 0.5rem;
 }
 
+.rangeContainer {
+  display: flex;
+  justify-content:end;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

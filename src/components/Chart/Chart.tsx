@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { Line } from "react-chartjs-2";
-import { Chart, registerables } from "chart.js";
+import { Chart, ChartOptions, registerables } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom";
 import { WeatherData } from "../../types";
 import styles from "./Chart.module.css";
@@ -101,19 +102,7 @@ export const ChartComponent: React.FC<ChartProps> = ({ data }) => {
       mode: "nearest",
       intersect: false,
     },
-    zoom: {
-      pan: {
-        enabled: true,
-        mode: 'xy',
-      },
-      zoom: {
-        enabled: true,
-        mode: 'xy',
-        speed: 0.1,
-        threshold: 2,
-      },
-    },
-  };
+  } as const satisfies ChartOptions<"line">;
 
   return (
     <div className={styles.chartContainer}>
