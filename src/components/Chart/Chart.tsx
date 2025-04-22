@@ -20,7 +20,7 @@ export const ChartComponent: React.FC<ChartProps> = ({ data }) => {
     labels: data.hourly.map(item => item.day),
     datasets: [
       {
-        label: "Temperatura Promedio (°C)",
+        label: "Temperatura (°C)",
         data: data.hourly.map(item => item.temperature),
         borderColor: "#3B82F6",
         backgroundColor: "rgba(59, 130, 246, 0.1)",

@@ -5,7 +5,11 @@ import { ChartComponent } from "./components/Chart/Chart";
 import { SearchBar } from "./components/SearchBar/SearchBar";
 import { DateRangeSelect } from "./components/DateRangeSelect/DateRangeSelect";
 import { WeatherData } from "./types";
+import { utils, writeFile } from "xlsx";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 import './App.css';
+
 
 const App: React.FC = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
@@ -15,14 +19,12 @@ const App: React.FC = () => {
   const [searchedCity, setSearchedCity] = useState<string>("");
   const { fetchWeatherData } = useWeather();
 
-  // Efecto para cambios de rango
   useEffect(() => {
     if (searchedCity) {
       fetchWeather(searchedCity);
     }
   }, [range]);
 
-  // Función unificada de búsqueda
   const fetchWeather = async (city: string) => {
     setLoading(true);
     setError(null);
@@ -39,6 +41,9 @@ const App: React.FC = () => {
         case 6: startDate = subDays(endDate, 6); break;
         case 12: startDate = subDays(endDate, 12); break;
         case 15: startDate = subDays(endDate, 15); break;
+        case 30: startDate = startOfMonth(endDate); break;
+        case 90: startDate = subMonths(endDate, 3); break;
+        case 180: startDate = subMonths(endDate, 6); break;
         default: startDate = subDays(endDate, 6);
       }
 
@@ -56,11 +61,50 @@ const App: React.FC = () => {
     }
   };
 
-  // Handler de búsqueda manual
   const handleSearch = (city: string) => {
     setSearchedCity(city);
-    fetchWeather(city); // Usamos el valor actual directamente
+    fetchWeather(city);
   };
+
+  const exportToXLSX = () => {
+    if (!weatherData) return;
+    
+    const worksheet = utils.json_to_sheet(
+      weatherData.hourly.map(t => ({
+        Fecha: t.date,
+        "Temperatura (°C)": t.temperature
+      }))
+    );
+    
+    worksheet["!cols"] = [{ wch: 15 }, { wch: 12 }];
+    
+    const workbook = utils.book_new();
+    utils.book_append_sheet(workbook, worksheet, "Datos");
+    writeFile(workbook, `Clima_${weatherData.city}.xlsx`);
+  };
+
+  const exportToCSV = () => {
+    if (!weatherData) return;
+    
+    const csvContent = [
+      "Fecha,Temperatura (°C)",
+      ...weatherData.hourly.map(t => 
+        `${t.date},${t.temperature}`
+      )
+    ].join("\n");
+    
+    const blob = new Blob(["\ufeff" + csvContent], {
+      type: "text/csv;charset=utf-8;"
+    });
+    
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `Clima_${weatherData.city}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
 
   return (
     <div className="appContainer">
@@ -77,7 +121,17 @@ const App: React.FC = () => {
 
         {weatherData && (
           <div className="weatherResult">
-            <h2 className="locationTitle">Temperatura en {weatherData.city}</h2>
+            <div className="reportHeader">
+              <h2 className="locationTitle">Temperatura en {weatherData.city}</h2>
+              <div className="exportButtons">
+                <button onClick={exportToXLSX} className="exportBtn xlsx">
+                  Excel
+                </button>
+                <button onClick={exportToCSV} className="exportBtn csv">
+                  CSV
+                </button>
+              </div>
+            </div>
             <ChartComponent data={weatherData} />
           </div>
         )}
